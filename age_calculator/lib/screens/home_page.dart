@@ -1,6 +1,7 @@
-import 'dart:developer';
-
+import 'package:age/age.dart';
 import 'package:flutter/material.dart';
+
+import 'model/age.calculate.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -11,7 +12,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DateTime todayDate = DateTime.now();
-  DateTime dob = DateTime(1990, 1, 1);
+  DateTime dob = DateTime(1991, 1, 1);
+
+  late AgeDuration _ageDuration;
 
   List<String> _months = [
     "January",
@@ -29,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   Future<Null> _selectTodayDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: todayDate,
       firstDate: DateTime(1900),
@@ -41,6 +44,27 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
+
+  Future<Null> _selectDOBDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: dob,
+      firstDate: DateTime(1991),
+      lastDate: todayDate,
+    );
+    if (picked != null && picked != todayDate) {
+      setState(() {
+        dob = picked;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _ageDuration = AgeCalculate().calculateAge(todayDate, dob);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -83,10 +107,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Icon(
-                  Icons.calendar_month_outlined,
-                  color: Colors.white,
-                  size: 30,
+                GestureDetector(
+                  onTap: () {
+                    _selectTodayDate(context);
+                  },
+                  child: const Icon(
+                    Icons.calendar_month_outlined,
+                    color: Colors.white,
+                    size: 30,
+                  ),
                 ),
               ],
             ),
@@ -113,10 +142,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Icon(
-                  Icons.calendar_month_outlined,
-                  color: Colors.white,
-                  size: 30,
+                GestureDetector(
+                  onTap: () {
+                    _selectDOBDate(context);
+                  },
+                  child: const Icon(
+                    Icons.calendar_month_outlined,
+                    color: Colors.white,
+                    size: 30,
+                  ),
                 ),
               ],
             ),
@@ -176,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             Text(
-                              "10 months | 5 days",
+                              "${_ageDuration.months} monts | ${_ageDuration.days} days",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w400,
@@ -273,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 5,
                             ),
                             Text(
-                              "20",
+                              "${_ageDuration.years}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
