@@ -15,6 +15,8 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime dob = DateTime(1991, 1, 1);
 
   late AgeDuration _ageDuration;
+  late AgeDuration _nextBirthdate;
+  late int _nextbirthdayWeekday;
 
   List<String> _months = [
     "January",
@@ -31,6 +33,16 @@ class _HomeScreenState extends State<HomeScreen> {
     "December"
   ];
 
+  List<String> _weeks = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ];
+
   Future<Null> _selectTodayDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -41,6 +53,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (picked != null && picked != todayDate) {
       setState(() {
         todayDate = picked;
+        _ageDuration = AgeCalculate().calculateAge(todayDate, dob);
+        _nextBirthdate = AgeCalculate().nextBirthday(todayDate, dob);
+        _nextbirthdayWeekday = AgeCalculate().nextbirthday(todayDate, dob);
       });
     }
   }
@@ -55,6 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (picked != null && picked != todayDate) {
       setState(() {
         dob = picked;
+        _ageDuration = AgeCalculate().calculateAge(todayDate, dob);
+        _nextBirthdate = AgeCalculate().nextBirthday(todayDate, dob);
+        _nextbirthdayWeekday = AgeCalculate().nextbirthday(todayDate, dob);
       });
     }
   }
@@ -63,6 +81,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _ageDuration = AgeCalculate().calculateAge(todayDate, dob);
+    _nextBirthdate = AgeCalculate().nextBirthday(todayDate, dob);
+    _nextbirthdayWeekday = AgeCalculate().nextbirthday(todayDate, dob);
   }
 
   @override
@@ -189,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  "22",
+                                  "${_ageDuration.years}",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 50,
@@ -247,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               size: 40,
                             ),
                             Text(
-                              "Sunday",
+                              "${_weeks[_nextbirthdayWeekday]}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 22,
@@ -330,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 5,
                             ),
                             Text(
-                              "20",
+                              "${((_ageDuration.years) * 12) + (_ageDuration.months)}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
@@ -353,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 5,
                             ),
                             Text(
-                              "20",
+                              "${(todayDate.difference(dob).inDays / 7).floor()}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
@@ -387,7 +407,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 5,
                             ),
                             Text(
-                              "2",
+                              "${todayDate.difference(dob).inDays}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
@@ -410,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 5,
                             ),
                             Text(
-                              "12",
+                              "${todayDate.difference(dob).inHours}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
@@ -433,7 +453,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 5,
                             ),
                             Text(
-                              "5",
+                              "${todayDate.difference(dob).inMinutes}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,

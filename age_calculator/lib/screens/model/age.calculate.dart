@@ -10,7 +10,7 @@ class AgeCalculate {
     return age;
   }
 
-  AgeDuration? nextBirthday(DateTime today, DateTime birthDate) {
+  AgeDuration nextBirthday(DateTime today, DateTime birthDate) {
     DateTime temp = DateTime(today.year, birthDate.month, birthDate.day);
 
     DateTime nextBirthdayDate = temp.isBefore(today)
@@ -23,5 +23,18 @@ class AgeCalculate {
     AgeDuration nextBirthdayDuration =
         Age.dateDifference(fromDate: today, toDate: nextBirthdayDate);
     return nextBirthdayDuration;
+  }
+
+  int nextbirthday(DateTime today, DateTime birthDate) {
+    DateTime temp = DateTime(today.year, birthDate.month, birthDate.day);
+
+    DateTime nextBirthdayDate = temp.isBefore(today)
+        ? Age.add(
+            date: temp,
+            duration: AgeDuration(years: 1),
+          )
+        : temp;
+
+    return nextBirthdayDate.weekday;
   }
 }
